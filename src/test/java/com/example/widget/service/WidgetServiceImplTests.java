@@ -29,37 +29,34 @@ class WidgetServiceImplTests {
     private GadgetServiceImpl gadgetService = new GadgetServiceImpl(gadgetRepository);
 
     @Test
-    void FindAll_ReturnsAListOfWidgetsWithGadgets() {
-        Page<WidgetEntity> widgetsWithPageZeroSizeFour = new PageImpl<>(Arrays.asList(
+    void FindAll_ReturnsAPagedListOfWidgetsWithGadgets() {
+        Page<WidgetEntity> widgetsWithPageZeroSizeThree = new PageImpl<>(Arrays.asList(
                 new WidgetEntity(1L, "Fake Widget 1"),
                 new WidgetEntity(2L, "Fake widget 2"),
-                new WidgetEntity(3L, "Fake widget 3"),
-                new WidgetEntity(4L, "Fake widget 4")
+                new WidgetEntity(3L, "Fake widget 3")
         ));
 
-        when(widgetRepository.findAll(PageRequest.of(0, 4))).thenReturn(widgetsWithPageZeroSizeFour);
+        when(widgetRepository.findAll(PageRequest.of(0, 3))).thenReturn(widgetsWithPageZeroSizeThree);
 
         when(gadgetRepository.findAll()).thenReturn(Arrays.asList(
                 new GadgetEntity(21L, "Fake gadget 21", 1L),
                 new GadgetEntity(22L, "Fake gadget 22", 1L),
                 new GadgetEntity(23L, "Fake gadget 23", 2L),
-                new GadgetEntity(24L, "Fake gadget 24", 3L),
-                new GadgetEntity(25L, "Fake gadget 25", 4L)
+                new GadgetEntity(24L, "Fake gadget 24", 3L)
         ));
 
-        Page<WidgetResponse> pagedWidgets = widgetService.findAll(PageRequest.of(0, 4));
+        Page<WidgetResponse> pagedWidgets = widgetService.findAll(PageRequest.of(0, 3));
         List<WidgetResponse> widgets = pagedWidgets.getContent();
         List<GadgetResponse> gadgets = gadgetService.findAll();
 
-        assertThat(widgets.size(), equalTo(4));
-        assertThat(gadgets.size(), equalTo(5));
+        assertThat(widgets.size(), equalTo(3));
+        assertThat(gadgets.size(), equalTo(4));
         assertThat(widgets.get(0).getGadgets().get(0).getName(), equalTo(gadgets.get(0).getName()));
         assertThat(widgets.get(0).getGadgets().get(1).getName(), equalTo(gadgets.get(1).getName()));
         assertThat(widgets.get(1).getGadgets().get(0).getName(), equalTo(gadgets.get(2).getName()));
         assertThat(widgets.get(2).getGadgets().get(0).getName(), equalTo(gadgets.get(3).getName()));
-        assertThat(widgets.get(3).getGadgets().get(0).getName(), equalTo(gadgets.get(4).getName()));
 
-        verify(widgetRepository).findAll(PageRequest.of(0, 4));
+        verify(widgetRepository).findAll(PageRequest.of(0, 3));
     }
 
     @Test
