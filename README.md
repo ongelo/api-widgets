@@ -43,21 +43,4 @@ the gradlew.bat instead of gradlew.
 ./gradlew clean bootRun
 ```
 
-## Tasks
-
-Here are the items we would like to implement in the API.  Feel free to tackle as many (or few) items as you have time for.
-This is not an ordered list in any way and you should be able to complete most of these tasks independently of the others.
-
-1. Implement a create gadget endpoint in the controller layer.
-1. Implement a find all gadgets endpoint in the controller layer.
-1. Return associated gadgets with widgets in the controller layer.
-1. Rather than returning a list of widgets, we would like to return a paged response from the find all widgets endpoint.
-1. Optionally write tests for the above tasks.
-
-## General information
-
-The api was created using spring boot and implementing the controller-service-repository pattern.  The DTOs (Data transfer objects)
-and the entities have been setup to give all the information that is needed to complete the tasks above.  Comments are appreciated on
-the code where appropriate.  Feedback on the difficulty of the tasks and possible next steps for the API is also welcome.
-
 
