@@ -13,8 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class WidgetServiceImpl implements WidgetService {
@@ -41,15 +40,24 @@ public class WidgetServiceImpl implements WidgetService {
         List<WidgetEntity> widget_entities = this.widgetRepository.findAll(pageRequest).getContent();
         List<GadgetEntity> gadget_entities = this.gadgetRepository.findAll(); // all the potential gadgets
 
-        // Compares all the widgets with potential gadgets and adds to response array
-        for (WidgetEntity widget_entity : widget_entities) {
-            List<GadgetResponse> associated_gadgets = new ArrayList<>(); // create an array of gadgets for each widget
-            for(GadgetEntity gadget_entity : gadget_entities) {
-                if(widget_entity.getId() == gadget_entity.getWidgetId()) { // check if associated
-                    associated_gadgets.add(new GadgetResponse(gadget_entity.getName(), gadget_entity.getWidgetId()));
-                }
-            }
-            response.add(new WidgetResponse(widget_entity.getName(), associated_gadgets));
+
+        Map<Long, List<GadgetResponse>> map = new HashMap<>();
+
+        // Create a hash map with widget entity id's as keys
+        for(WidgetEntity widget_entity : widget_entities) {
+            map.put(widget_entity.getId(), new ArrayList<>());
+        }
+
+        // add gadgets to the hash map by the associated widget id
+        for(GadgetEntity gadget_entity : gadget_entities) {
+            List<GadgetResponse> associated_gadgets = map.get(gadget_entity.getWidgetId());
+            associated_gadgets.add(new GadgetResponse(gadget_entity.getName(), gadget_entity.getWidgetId()));
+            map.replace(gadget_entity.getWidgetId(), associated_gadgets);
+        }
+
+        // fill the response list with widgetResponse objects from the hash map
+        for(WidgetEntity widget_entity : widget_entities) {
+            response.add(new WidgetResponse(widget_entity.getName(), map.get(widget_entity.getId())));
         }
 
         return new PageImpl<>(response); // return response list as a Page object
